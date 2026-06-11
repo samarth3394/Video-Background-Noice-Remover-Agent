@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (currentWidth < 95) {
                         currentWidth += 0.2; // very slow increment for heavy AI processing
                         progressFill.style.width = `${currentWidth}%`;
-                        progressLabel.textContent = `${Math.floor(currentWidth)}%`;
+                        progressLabel.textContent = `${currentWidth.toFixed(1)}%`;
                     }
                 } else if (data.status === 'completed') {
                     clearInterval(checkInterval);
