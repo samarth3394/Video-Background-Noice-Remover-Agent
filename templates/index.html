@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClearVoice | AI Video Noise Removal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h1>ClearVoice</h1>
+            </div>
+            <p class="subtitle">Instantly remove background noise from your videos using advanced AI while preserving 100% original quality.</p>
+        </header>
+
+        <div class="glass-panel">
+            <!-- Upload Area -->
+            <div class="upload-area" id="drop-zone">
+                <input type="file" id="file-input" accept="video/*" hidden>
+                <div class="upload-content">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <h3>Drag & Drop your video here</h3>
+                    <p>or</p>
+                    <button class="btn primary-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                    <p class="file-info">Supports MP4, MOV, AVI</p>
+                </div>
+            </div>
+
+            <!-- Selected File Area -->
+            <div class="selected-file hidden" id="selected-file">
+                <div class="file-details">
+                    <i class="fa-solid fa-file-video file-icon"></i>
+                    <div class="file-name-size">
+                        <span id="file-name">video.mp4</span>
+                        <span id="file-size">12 MB</span>
+                    </div>
+                </div>
+                <button class="btn action-btn" id="process-btn">
+                    <i class="fa-solid fa-bolt"></i> Remove Noise
+                </button>
+            </div>
+
+            <!-- Processing Status -->
+            <div class="processing-area hidden" id="processing-area">
+                <div class="loader">
+                    <div class="spinner"></div>
+                </div>
+                <h3>Processing Video</h3>
+                <p>Removing background noise and enhancing voice clarity...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Result Area -->
+            <div class="result-area hidden" id="result-area">
+                <div class="success-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3>Noise Removed Successfully!</h3>
+                <p>Your video is ready with crystal clear audio.</p>
+                <a href="#" class="btn download-btn" id="download-btn">
+                    <i class="fa-solid fa-download"></i> Download Video
+                </a>
+                <button class="btn text-btn" id="reset-btn">Upload Another Video</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 ClearVoice. Built with <i class="fa-solid fa-heart" style="color: var(--accent-pink)"></i> for creators.</p>
+        </footer>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

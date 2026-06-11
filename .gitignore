@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+uploads/
+processed/
+temp_audio*.wav
+temp_denoised_audio*.wav
+.env
+venv/
+env/
+.idea/
+.vscode/
