@@ -3,87 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClearVoice | AI Video Noise Removal</title>
+    <title>Bharti Voice Cleaner | AI-Powered Background Noise Removal</title>
+    <meta name="description" content="Remove background noise from your videos instantly using AI. Keep only the voice. Crystal clear audio, every time.">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Modern Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background-elements">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#grad1)" opacity="0.1"/>
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" fill="url(#grad1)"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="url(#grad1)"/>
+                <defs>
+                    <linearGradient id="grad1" x1="2" y1="2" x2="22" y2="22">
+                        <stop offset="0%" stop-color="#fff"/>
+                        <stop offset="100%" stop-color="#999"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>Bharti Voice Cleaner</span>
+        </div>
+    </nav>
 
-    <main class="container">
-        <header class="header">
-            <div class="logo">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <h1>ClearVoice</h1>
-            </div>
-            <p class="subtitle">Instantly remove background noise from your videos using advanced AI while preserving 100% original quality.</p>
-        </header>
-
-        <div class="glass-panel">
-            <!-- Upload Area -->
-            <div class="upload-area" id="drop-zone">
-                <input type="file" id="file-input" accept="video/*" hidden>
-                <div class="upload-content">
-                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-                    <h3>Drag & Drop your video here</h3>
-                    <p>or</p>
-                    <button class="btn primary-btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
-                    <p class="file-info">Supports MP4, MOV, AVI</p>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <p class="hero-eyebrow">Powered by Meta AI</p>
+            <h1 class="hero-title">
+                <span class="line line-1">Remove Every</span>
+                <span class="line line-2">Background Sound.</span>
+                <span class="line line-3 gradient-text">Keep Only Voice.</span>
+            </h1>
+            <p class="hero-subtitle">Advanced AI isolates human speech from any video. Wind, traffic, music, crowd noise — all gone. Just crystal clear voice.</p>
+            <a href="#upload-section" class="hero-cta">
+                <span>Try It Now</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v14m0 0l5-5m-5 5l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+        <div class="hero-visual">
+            <div class="waveform-container">
+                <div class="waveform waveform-before">
+                    <div class="wave-label">Before</div>
+                    <div class="wave-bars" id="wave-before"></div>
                 </div>
-            </div>
-
-            <!-- Selected File Area -->
-            <div class="selected-file hidden" id="selected-file">
-                <div class="file-details">
-                    <i class="fa-solid fa-file-video file-icon"></i>
-                    <div class="file-name-size">
-                        <span id="file-name">video.mp4</span>
-                        <span id="file-size">12 MB</span>
-                    </div>
+                <div class="waveform-arrow">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M8 20h24m0 0l-8-8m8 8l-8 8" stroke="url(#arrowGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="arrowGrad" x1="8" y1="20" x2="32" y2="20"><stop stop-color="#555"/><stop offset="1" stop-color="#fff"/></linearGradient></defs></svg>
                 </div>
-                <button class="btn action-btn" id="process-btn">
-                    <i class="fa-solid fa-bolt"></i> Remove Noise
-                </button>
-            </div>
-
-            <!-- Processing Status -->
-            <div class="processing-area hidden" id="processing-area">
-                <div class="loader">
-                    <div class="spinner"></div>
+                <div class="waveform waveform-after">
+                    <div class="wave-label">After</div>
+                    <div class="wave-bars" id="wave-after"></div>
                 </div>
-                <h3>Processing Video</h3>
-                <p>Removing background noise and enhancing voice clarity...</p>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-            </div>
-
-            <!-- Result Area -->
-            <div class="result-area hidden" id="result-area">
-                <div class="success-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <h3>Noise Removed Successfully!</h3>
-                <p>Your video is ready with crystal clear audio.</p>
-                <a href="#" class="btn download-btn" id="download-btn">
-                    <i class="fa-solid fa-download"></i> Download Video
-                </a>
-                <button class="btn text-btn" id="reset-btn">Upload Another Video</button>
             </div>
         </div>
-        
-        <footer>
-            <p>&copy; 2026 ClearVoice. Built with <i class="fa-solid fa-heart" style="color: var(--accent-pink)"></i> for creators.</p>
-        </footer>
-    </main>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="features-grid">
+            <div class="feature-card" data-animate>
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="1.5"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3m-3 0h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <h3>AI Voice Isolation</h3>
+                <p>Deep learning separates human speech from all other sounds at the neural level.</p>
+            </div>
+            <div class="feature-card" data-animate>
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h3>100% Quality Preserved</h3>
+                <p>Video is never re-encoded. Original resolution, framerate and file size stay intact.</p>
+            </div>
+            <div class="feature-card" data-animate>
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h3>Fast Processing</h3>
+                <p>Optimized pipeline processes your video in minutes, not hours.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload-section">
+        <div class="section-header">
+            <h2>Clean Your Video</h2>
+            <p>Drop your video below and let AI do the rest.</p>
+        </div>
+
+        <!-- Upload State -->
+        <div class="upload-card" id="upload-card">
+            <div class="upload-zone" id="drop-zone">
+                <input type="file" id="file-input" accept="video/*" hidden>
+                <div class="upload-zone-content">
+                    <div class="upload-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                        </svg>
+                        <div class="upload-icon-center">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </div>
+                    <h3>Drop your video here</h3>
+                    <p>or <button class="link-btn" onclick="document.getElementById('file-input').click()">browse files</button></p>
+                    <span class="upload-hint">MP4, MOV, AVI — up to 500MB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Selected State -->
+        <div class="state-card hidden" id="file-card">
+            <div class="file-preview">
+                <div class="file-thumb">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+                <div class="file-info">
+                    <span class="file-name" id="file-name">video.mp4</span>
+                    <span class="file-size" id="file-size">24 MB</span>
+                </div>
+                <button class="remove-file-btn" id="remove-file-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <button class="process-btn" id="process-btn">
+                <span>Remove Background Noise</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+        </div>
+
+        <!-- Processing State -->
+        <div class="state-card hidden" id="processing-card">
+            <div class="processing-visual">
+                <div class="processing-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <div class="processing-center-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" fill="white"/><path d="M19 10v1a7 7 0 0 1-14 0v-1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </div>
+                </div>
+            </div>
+            <h3 class="processing-title">AI is working</h3>
+            <p class="processing-desc" id="processing-status">Separating voice from background...</p>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span class="progress-label" id="progress-label">Processing...</span>
+        </div>
+
+        <!-- Done State -->
+        <div class="state-card hidden" id="done-card">
+            <div class="done-visual">
+                <div class="done-check">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="23" stroke="url(#doneGrad)" stroke-width="2"/>
+                        <path d="M14 24l7 7 13-13" stroke="url(#doneGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="check-path"/>
+                        <defs><linearGradient id="doneGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
+                    </svg>
+                </div>
+            </div>
+            <h3>Voice Isolated Successfully</h3>
+            <p>Background noise removed. Only clean voice remains.</p>
+            <a href="#" class="download-btn" id="download-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Download Clean Video</span>
+            </a>
+            <button class="reset-btn" id="reset-btn">Process Another Video</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-line"></div>
+        <p>Bharti Voice Cleaner &mdash; Built with Meta Demucs AI</p>
+    </footer>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

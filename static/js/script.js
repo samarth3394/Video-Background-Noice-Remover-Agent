@@ -1,19 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Feature card animations on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('[data-animate]').forEach((el, index) => {
+        el.style.opacity = 0;
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = `all 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.1}s`;
+        observer.observe(el);
+    });
+
+    // File Upload Logic
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
-    const selectedFileArea = document.getElementById('selected-file');
-    const processingArea = document.getElementById('processing-area');
-    const resultArea = document.getElementById('result-area');
-    const fileNameDisplay = document.getElementById('file-name');
-    const fileSizeDisplay = document.getElementById('file-size');
+    
+    // Cards
+    const uploadCard = document.getElementById('upload-card');
+    const fileCard = document.getElementById('file-card');
+    const processingCard = document.getElementById('processing-card');
+    const doneCard = document.getElementById('done-card');
+    
+    // Elements
+    const fileNameEl = document.getElementById('file-name');
+    const fileSizeEl = document.getElementById('file-size');
+    const removeBtn = document.getElementById('remove-file-btn');
     const processBtn = document.getElementById('process-btn');
     const downloadBtn = document.getElementById('download-btn');
     const resetBtn = document.getElementById('reset-btn');
-    const progressBar = document.getElementById('progress-bar');
+    
+    const progressFill = document.getElementById('progress-fill');
+    const progressLabel = document.getElementById('progress-label');
+    const processingStatus = document.getElementById('processing-status');
 
-    let selectedFile = null;
+    let currentFile = null;
+    let jobId = null;
+    let checkInterval = null;
 
-    // Drag and Drop Events
+    // Helper: Format file size
+    const formatSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    };
+
+    // Helper: Switch Cards
+    const showCard = (cardToShow) => {
+        [uploadCard, fileCard, processingCard, doneCard].forEach(card => {
+            if (card === cardToShow) {
+                card.classList.remove('hidden');
+                // Tiny delay to ensure display:block applies before animating opacity if we added that
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    };
+
+    // Handle Drag & Drop
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, preventDefaults, false);
     });
@@ -31,118 +81,126 @@ document.addEventListener('DOMContentLoaded', () => {
         dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
     });
 
-    dropZone.addEventListener('drop', handleDrop, false);
-    fileInput.addEventListener('change', handleFileSelect, false);
-
-    function handleDrop(e) {
+    dropZone.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
         const files = dt.files;
         handleFiles(files);
-    }
+    });
 
-    function handleFileSelect(e) {
-        const files = e.target.files;
-        handleFiles(files);
-    }
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
 
     function handleFiles(files) {
         if (files.length > 0) {
-            selectedFile = files[0];
-            
-            // Format size
-            let size = selectedFile.size;
-            let sizeStr = '';
-            if (size > 1024 * 1024) {
-                sizeStr = (size / (1024 * 1024)).toFixed(2) + ' MB';
+            const file = files[0];
+            if (file.type.startsWith('video/')) {
+                currentFile = file;
+                fileNameEl.textContent = file.name;
+                fileSizeEl.textContent = formatSize(file.size);
+                showCard(fileCard);
             } else {
-                sizeStr = (size / 1024).toFixed(2) + ' KB';
+                alert('Please upload a valid video file.');
             }
-
-            fileNameDisplay.textContent = selectedFile.name;
-            fileSizeDisplay.textContent = sizeStr;
-
-            dropZone.classList.add('hidden');
-            selectedFileArea.classList.remove('hidden');
         }
     }
 
+    removeBtn.addEventListener('click', () => {
+        currentFile = null;
+        fileInput.value = '';
+        showCard(uploadCard);
+    });
+
+    resetBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentFile = null;
+        fileInput.value = '';
+        jobId = null;
+        if (checkInterval) clearInterval(checkInterval);
+        showCard(uploadCard);
+    });
+
     // Process Video
     processBtn.addEventListener('click', async () => {
-        if (!selectedFile) return;
+        if (!currentFile) return;
 
-        selectedFileArea.classList.add('hidden');
-        processingArea.classList.remove('hidden');
+        showCard(processingCard);
         
-        // Start simulated progress bar
-        let progress = 0;
-        progressBar.style.width = '0%';
-        const interval = setInterval(() => {
-            if(progress < 90) {
-                progress += Math.random() * 2;
-                progressBar.style.width = `${progress}%`;
-            }
-        }, 500);
+        // Setup initial UI
+        progressFill.style.width = '0%';
+        progressLabel.textContent = '0%';
+        processingStatus.textContent = 'Uploading video securely...';
 
         const formData = new FormData();
-        formData.append('video', selectedFile);
+        formData.append('video', currentFile);
 
         try {
+            // Simulated upload progress since fetch doesn't natively support it easily without XHR
+            let uploadProgress = 0;
+            const uploadSim = setInterval(() => {
+                uploadProgress += 5;
+                if (uploadProgress <= 90) {
+                    progressFill.style.width = `${uploadProgress}%`;
+                    progressLabel.textContent = `${uploadProgress}%`;
+                }
+            }, 200);
+
             const response = await fetch('/upload', {
                 method: 'POST',
                 body: formData
             });
+            
+            clearInterval(uploadSim);
 
             const data = await response.json();
-            if (response.ok) {
-                checkStatus(data.job_id, interval);
+
+            if (data.job_id) {
+                jobId = data.job_id;
+                progressFill.style.width = '10%';
+                progressLabel.textContent = '10%';
+                processingStatus.textContent = 'Isolating voice using Meta Demucs AI... (This may take a few minutes)';
+                pollStatus();
             } else {
-                alert('Error: ' + data.error);
-                resetUI();
+                throw new Error(data.error || 'Upload failed');
             }
         } catch (error) {
-            console.error('Error uploading file:', error);
-            alert('An error occurred while uploading the file.');
-            resetUI();
+            alert('Error: ' + error.message);
+            showCard(fileCard);
         }
     });
 
-    function checkStatus(jobId, interval) {
-        const statusInterval = setInterval(async () => {
+    function pollStatus() {
+        checkInterval = setInterval(async () => {
             try {
-                const response = await fetch(`/status/${jobId}`);
-                const data = await response.json();
+                const res = await fetch(`/status/${jobId}`);
+                const data = await res.json();
 
-                if (data.status === 'completed') {
-                    clearInterval(statusInterval);
-                    clearInterval(interval);
-                    progressBar.style.width = '100%';
+                if (data.status === 'processing') {
+                    // Update dummy progress for processing
+                    // Normally the backend would send actual progress
+                    let currentWidth = parseFloat(progressFill.style.width) || 10;
+                    if (currentWidth < 95) {
+                        currentWidth += 1; // slow increment
+                        progressFill.style.width = `${currentWidth}%`;
+                        progressLabel.textContent = `${Math.round(currentWidth)}%`;
+                    }
+                } else if (data.status === 'completed') {
+                    clearInterval(checkInterval);
+                    progressFill.style.width = '100%';
+                    progressLabel.textContent = '100%';
                     
                     setTimeout(() => {
-                        processingArea.classList.add('hidden');
-                        resultArea.classList.remove('hidden');
                         downloadBtn.href = `/download/${data.output_file}`;
+                        showCard(doneCard);
                     }, 500);
                 } else if (data.status === 'error') {
-                    clearInterval(statusInterval);
-                    clearInterval(interval);
-                    alert('Error processing video: ' + data.error);
-                    resetUI();
+                    clearInterval(checkInterval);
+                    alert('Processing failed: ' + data.message);
+                    showCard(fileCard);
                 }
             } catch (error) {
                 console.error('Error checking status:', error);
             }
         }, 2000);
-    }
-
-    resetBtn.addEventListener('click', resetUI);
-
-    function resetUI() {
-        selectedFile = null;
-        fileInput.value = '';
-        dropZone.classList.remove('hidden');
-        selectedFileArea.classList.add('hidden');
-        processingArea.classList.add('hidden');
-        resultArea.classList.add('hidden');
-        progressBar.style.width = '0%';
     }
 });
