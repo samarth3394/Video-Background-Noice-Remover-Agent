@@ -22,6 +22,14 @@ jobs = {}
 def index():
     return render_template('index.html')
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 def process_video_job(job_id, input_path, output_path):
     try:
         remove_noise(input_path, output_path)

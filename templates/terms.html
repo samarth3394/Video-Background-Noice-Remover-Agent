@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Bharti Voice Cleaner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .doc-section {
+            padding: 160px 20px 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .doc-heading {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .doc-last-updated {
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            font-size: 0.95rem;
+        }
+        .doc-content h2 {
+            font-size: 1.5rem;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .doc-content p, .doc-content ul {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+        .doc-content ul {
+            padding-left: 24px;
+        }
+        .doc-content li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="url(#logoGrad)" stroke-width="1.5"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3m-3 0h6" stroke="url(#logoGrad)" stroke-width="1.5" stroke-linecap="round"/><defs><linearGradient id="logoGrad" x1="5" y1="2" x2="19" y2="22"><stop stop-color="#fff"/><stop offset="1" stop-color="#888"/></linearGradient></defs></svg>
+            <a href="/" style="color: inherit; text-decoration: none;">Bharti Voice Cleaner</a>
+        </div>
+    </nav>
+
+    <section class="doc-section">
+        <h1 class="doc-heading">Terms of Service</h1>
+        <p class="doc-last-updated">Last Updated: June 12, 2026</p>
+
+        <div class="doc-content">
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing and using Bharti Voice Cleaner, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these terms, please do not use this service.</p>
+
+            <h2>2. Description of Service</h2>
+            <p>Bharti Voice Cleaner provides an AI-powered web utility designed to isolate human speech and remove background noise from user-uploaded video and audio files.</p>
+
+            <h2>3. User Responsibilities and Conduct</h2>
+            <p>You agree to only upload files that you have the legal right to possess and process. You must not use the service to process illegal, harmful, or grossly offensive material. We reserve the right to refuse service or terminate processing of any files at our sole discretion.</p>
+
+            <h2>4. Intellectual Property</h2>
+            <p>You retain all rights to the videos you upload. By uploading a file, you grant us a temporary, limited license to process the file solely to provide you with the cleaned audio/video output. Our underlying software, design, and branding (including Bharti Nexus Technologies trademarks) remain our exclusive property.</p>
+
+            <h2>5. Disclaimer of Warranties</h2>
+            <p>The service is provided "as is" and "as available". We do not guarantee that the service will be uninterrupted, error-free, or perfectly remove all noise in every scenario, as AI model outputs can vary based on input quality.</p>
+
+            <h2>6. Limitation of Liability</h2>
+            <p>In no event shall Bharti Nexus Technologies be liable for any damages, including but not limited to loss of data or profit, arising out of the use or inability to use the service.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-line"></div>
+        <div class="footer-content" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <p>© 2025 Bharti Nexus Technologies. All rights reserved.</p>
+            <div class="footer-links" style="display: flex; gap: 24px;">
+                <a href="/privacy" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Privacy Policy</a>
+                <a href="/terms" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
