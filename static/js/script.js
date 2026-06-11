@@ -203,4 +203,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 2000);
     }
+
+    // 3D Tilt Effect
+    const interactiveCards = document.querySelectorAll('.upload-card, .state-card');
+    
+    interactiveCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -3; // max 3 deg tilt
+            const rotateY = ((x - centerX) / centerX) * 3;  // max 3 deg tilt
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            card.style.transition = `transform 0.1s ease-out`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+            card.style.transition = `transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)`;
+        });
+    });
 });

@@ -33,59 +33,32 @@
     <section class="hero" id="hero">
         <div class="hero-glow"></div>
         <div class="hero-content">
-            <p class="hero-eyebrow">Powered by Meta AI</p>
             <h1 class="hero-title">
                 <span class="line line-1">Remove Every</span>
                 <span class="line line-2">Background Sound.</span>
                 <span class="line line-3 gradient-text">Keep Only Voice.</span>
             </h1>
             <p class="hero-subtitle">Advanced AI isolates human speech from any video. Wind, traffic, music, crowd noise — all gone. Just crystal clear voice.</p>
+            
+            <div class="inline-features">
+                <div class="inline-feature">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="1.5"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3m-3 0h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <span>AI Voice Isolation</span>
+                </div>
+                <div class="inline-feature">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>100% Quality Preserved</span>
+                </div>
+                <div class="inline-feature">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span>Fast Processing</span>
+                </div>
+            </div>
+
             <a href="#upload-section" class="hero-cta">
                 <span>Try It Now</span>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v14m0 0l5-5m-5 5l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-        </div>
-        <div class="hero-visual">
-            <div class="waveform-container">
-                <div class="waveform waveform-before">
-                    <div class="wave-label">Before</div>
-                    <div class="wave-bars" id="wave-before"></div>
-                </div>
-                <div class="waveform-arrow">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M8 20h24m0 0l-8-8m8 8l-8 8" stroke="url(#arrowGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="arrowGrad" x1="8" y1="20" x2="32" y2="20"><stop stop-color="#555"/><stop offset="1" stop-color="#fff"/></linearGradient></defs></svg>
-                </div>
-                <div class="waveform waveform-after">
-                    <div class="wave-label">After</div>
-                    <div class="wave-bars" id="wave-after"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="features-grid">
-            <div class="feature-card" data-animate>
-                <div class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="1.5"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v3m-3 0h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                </div>
-                <h3>AI Voice Isolation</h3>
-                <p>Deep learning separates human speech from all other sounds at the neural level.</p>
-            </div>
-            <div class="feature-card" data-animate>
-                <div class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="1.5"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <h3>100% Quality Preserved</h3>
-                <p>Video is never re-encoded. Original resolution, framerate and file size stay intact.</p>
-            </div>
-            <div class="feature-card" data-animate>
-                <div class="feature-icon">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <h3>Fast Processing</h3>
-                <p>Optimized pipeline processes your video in minutes, not hours.</p>
-            </div>
         </div>
     </section>
 
@@ -175,6 +148,19 @@
                 <span>Download Clean Video</span>
             </a>
             <button class="reset-btn" id="reset-btn">Process Another Video</button>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <h2>How It Works</h2>
+            <div class="about-text">
+                <p>When you record a video outdoors or in a crowded place, your microphone captures everything: traffic, wind, background chatter, and music.</p>
+                <p>Traditional audio filters just lower the volume of certain frequencies, which often makes your voice sound muffled and robotic.</p>
+                <p><strong>Bharti Voice Cleaner</strong> is different. We use <strong>Meta Demucs AI</strong>, a state-of-the-art Deep Learning neural network that has been trained to actually <em>understand</em> human speech.</p>
+                <p>It acts like a smart human ear, distinguishing your voice from the noise, and extracting only the clean vocal tracks while leaving the original video quality completely untouched.</p>
+            </div>
         </div>
     </section>
 
