@@ -176,13 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (data.status === 'processing') {
-                    // Update dummy progress for processing
-                    // Normally the backend would send actual progress
+                    // Update dummy progress for processing (slower, up to 10 minutes)
                     let currentWidth = parseFloat(progressFill.style.width) || 10;
                     if (currentWidth < 95) {
-                        currentWidth += 1; // slow increment
+                        currentWidth += 0.2; // very slow increment for heavy AI processing
                         progressFill.style.width = `${currentWidth}%`;
-                        progressLabel.textContent = `${Math.round(currentWidth)}%`;
+                        progressLabel.textContent = `${Math.floor(currentWidth)}%`;
                     }
                 } else if (data.status === 'completed') {
                     clearInterval(checkInterval);
@@ -195,11 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 500);
                 } else if (data.status === 'error') {
                     clearInterval(checkInterval);
-                    alert('Processing failed: ' + data.message);
+                    alert('Processing failed: ' + (data.error || 'Unknown error'));
                     showCard(fileCard);
                 }
             } catch (error) {
                 console.error('Error checking status:', error);
+                // If the server crashed (e.g. Out of Memory), alert the user
+                clearInterval(checkInterval);
+                alert('Connection lost. The AI process may have run out of memory or crashed. Try a shorter video.');
+                showCard(fileCard);
             }
         }, 2000);
     }

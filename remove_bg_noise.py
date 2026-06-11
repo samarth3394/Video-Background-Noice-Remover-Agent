@@ -71,7 +71,7 @@ def separate_vocals_demucs(audio_path, output_vocals_path):
     
     print("Separating vocals from background using AI...")
     with torch.no_grad():
-        sources = apply_model(model, wav, device='cpu', progress=True)
+        sources = apply_model(model, wav, shifts=0, split=True, overlap=0.1, device='cpu', progress=True)
     
     # Demucs htdemucs outputs: drums, bass, other, vocals
     # We want the vocals (index 3)
