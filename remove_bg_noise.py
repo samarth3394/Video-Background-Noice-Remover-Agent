@@ -26,6 +26,7 @@ def install_deps():
 install_deps()
 
 import torch
+torch.set_num_threads(2) # Limit CPU threads to prevent Flask server from hanging
 import torchaudio
 from scipy.io import wavfile
 from scipy.signal import butter, lfilter

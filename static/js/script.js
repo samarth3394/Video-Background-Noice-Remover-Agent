@@ -169,22 +169,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    let progressInterval = null;
+
     function pollStatus() {
-        checkInterval = setInterval(async () => {
+        // UI Dummy Progress (Independent of network)
+        progressInterval = setInterval(() => {
+            let currentWidth = parseFloat(progressFill.style.width) || 10;
+            if (currentWidth < 95) {
+                currentWidth += 0.5; 
+                progressFill.style.width = `${currentWidth}%`;
+                progressLabel.textContent = `${currentWidth.toFixed(1)}%`;
+            }
+        }, 1000); // 0.5% per second = ~3 mins to reach 95%
+
+        // Network Polling
+        const checkStatus = async () => {
             try {
                 const res = await fetch(`/status/${jobId}`);
                 const data = await res.json();
 
-                if (data.status === 'processing') {
-                    // Update dummy progress for processing (slower, up to 10 minutes)
-                    let currentWidth = parseFloat(progressFill.style.width) || 10;
-                    if (currentWidth < 95) {
-                        currentWidth += 0.2; // very slow increment for heavy AI processing
-                        progressFill.style.width = `${currentWidth}%`;
-                        progressLabel.textContent = `${currentWidth.toFixed(1)}%`;
-                    }
-                } else if (data.status === 'completed') {
-                    clearInterval(checkInterval);
+                if (data.status === 'completed') {
+                    clearInterval(progressInterval);
                     progressFill.style.width = '100%';
                     progressLabel.textContent = '100%';
                     
@@ -192,19 +197,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         downloadBtn.href = `/download/${data.output_file}`;
                         showCard(doneCard);
                     }, 500);
+                    return; // Stop polling
                 } else if (data.status === 'error') {
-                    clearInterval(checkInterval);
+                    clearInterval(progressInterval);
                     alert('Processing failed: ' + (data.error || 'Unknown error'));
                     showCard(fileCard);
+                    return; // Stop polling
                 }
             } catch (error) {
                 console.error('Error checking status:', error);
-                // If the server crashed (e.g. Out of Memory), alert the user
-                clearInterval(checkInterval);
-                alert('Connection lost. The AI process may have run out of memory or crashed. Try a shorter video.');
-                showCard(fileCard);
+                // Don't alert user immediately, server might just be busy with 100% CPU
             }
-        }, 2000);
+            
+            // Queue next check
+            checkInterval = setTimeout(checkStatus, 3000);
+        };
+
+        checkStatus();
     }
 
     // 3D Tilt Effect
