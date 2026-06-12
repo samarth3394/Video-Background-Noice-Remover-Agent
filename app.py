@@ -57,7 +57,7 @@ def upload_file():
         file.save(input_path)
         
         # Output path
-        output_filename = f"{base}_denoised{ext}"
+        output_filename = f"{base}_denoised.mp4"
         output_path = os.path.join(app.config['PROCESSED_FOLDER'], output_filename)
         
         jobs[job_id] = {'status': 'processing'}

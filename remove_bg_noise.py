@@ -110,7 +110,7 @@ def remove_noise(video_path, output_path=None):
 
     if output_path is None:
         base, ext = os.path.splitext(video_path)
-        output_path = f"{base}_clean{ext}"
+        output_path = f"{base}_clean.mp4"
         
     ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
     
@@ -143,7 +143,7 @@ def remove_noise(video_path, output_path=None):
             ffmpeg_exe, "-y",
             "-i", video_path,
             "-i", temp_vocals_path,
-            "-c:v", "copy",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p",
             "-c:a", "aac", "-b:a", "192k",
             "-map", "0:v:0", "-map", "1:a:0",
             "-shortest",
