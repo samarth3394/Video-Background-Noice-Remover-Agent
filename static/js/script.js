@@ -183,10 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000); // 0.5% per second = ~3 mins to reach 95%
 
         // Network Polling
+        let errorCount = 0;
         const checkStatus = async () => {
             try {
                 const res = await fetch(`/status/${jobId}`);
                 const data = await res.json();
+                errorCount = 0; // Reset on success
 
                 if (data.status === 'completed') {
                     clearInterval(progressInterval);
@@ -206,7 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error checking status:', error);
-                // Don't alert user immediately, server might just be busy with 100% CPU
+                errorCount++;
+                if (errorCount > 10) { // If it fails 10 times in a row (~30 seconds), server probably crashed
+                    clearInterval(progressInterval);
+                    alert('Connection lost. The AI process likely ran out of memory and crashed. Try a shorter video.');
+                    showCard(fileCard);
+                    return;
+                }
             }
             
             // Queue next check
