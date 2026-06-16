@@ -78,18 +78,8 @@ def separate_vocals_demucs(audio_path, output_vocals_path):
     # We want the vocals (index 3)
     vocals = sources[0, 3]  # Shape: [channels, samples]
     
-    print("Applying additional noise cleanup to vocals...")
-    # Convert to numpy for noisereduce
+    # Demucs already provides clean vocals, skip redundant and slow noisereduce
     vocals_np = vocals.numpy()
-    
-    # Apply light noise reduction to clean up any residual artifacts
-    if vocals_np.shape[0] == 2:  # stereo
-        cleaned_0 = nr.reduce_noise(y=vocals_np[0], sr=sr, prop_decrease=0.5, stationary=False)
-        cleaned_1 = nr.reduce_noise(y=vocals_np[1], sr=sr, prop_decrease=0.5, stationary=False)
-        vocals_np = np.stack([cleaned_0, cleaned_1])
-    else:
-        vocals_np = nr.reduce_noise(y=vocals_np[0], sr=sr, prop_decrease=0.5, stationary=False)
-        vocals_np = vocals_np[np.newaxis, :]
     
     # Normalize volume to make voice louder and clearer
     vocals_np = normalize_audio(vocals_np)
@@ -135,20 +125,54 @@ def remove_noise(video_path, output_path=None):
         print("=" * 50)
         output_sr = separate_vocals_demucs(temp_audio_path, temp_vocals_path)
         
-        # Step 3: Replace audio in video (keep original video quality)
+        # Step 3: Replace audio in video
         print("=" * 50)
         print("STEP 3: Replacing audio in video...")
         print("=" * 50)
-        subprocess.check_call([
-            ffmpeg_exe, "-y",
-            "-i", video_path,
-            "-i", temp_vocals_path,
-            "-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p",
-            "-c:a", "aac", "-b:a", "192k",
-            "-map", "0:v:0", "-map", "1:a:0",
-            "-shortest",
-            output_path
-        ], stderr=subprocess.DEVNULL)
+        
+        # Ensure output is .mp4
+        if not output_path.lower().endswith('.mp4'):
+            output_path = os.path.splitext(output_path)[0] + '.mp4'
+        
+        # Try copy mode first (fast, preserves original quality)
+        try:
+            print("Trying fast copy mode...")
+            result = subprocess.run([
+                ffmpeg_exe, "-y",
+                "-i", video_path,
+                "-i", temp_vocals_path,
+                "-c:v", "copy",
+                "-c:a", "aac", "-b:a", "192k",
+                "-map", "0:v:0", "-map", "1:a:0",
+                "-shortest",
+                "-movflags", "+faststart",
+                output_path
+            ], stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=120)
+            
+            if result.returncode != 0:
+                raise subprocess.CalledProcessError(result.returncode, "ffmpeg", stderr=result.stderr)
+            print("Fast copy mode succeeded!")
+            
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            print(f"Copy mode failed ({e}), trying re-encode mode...")
+            # Fallback: re-encode with libx264
+            result = subprocess.run([
+                ffmpeg_exe, "-y",
+                "-i", video_path,
+                "-i", temp_vocals_path,
+                "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", "-b:a", "192k",
+                "-map", "0:v:0", "-map", "1:a:0",
+                "-shortest",
+                "-movflags", "+faststart",
+                output_path
+            ], stderr=subprocess.PIPE, stdout=subprocess.PIPE, timeout=300)
+            
+            if result.returncode != 0:
+                stderr_msg = result.stderr.decode('utf-8', errors='replace') if result.stderr else 'Unknown error'
+                print(f"FFmpeg re-encode error: {stderr_msg}")
+                raise RuntimeError(f"FFmpeg failed: {stderr_msg}")
+            print("Re-encode mode succeeded!")
         
     finally:
         # Cleanup temp files

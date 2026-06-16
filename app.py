@@ -1,11 +1,14 @@
-from flask import Flask, request, jsonify, render_template, send_file
 import os
+import traceback
 from werkzeug.utils import secure_filename
-from remove_bg_noise import remove_noise
 import uuid
-import threading
+from flask import Flask, request, jsonify, render_template, send_file
+from tasks import process_video_task
 
 app = Flask(__name__)
+
+# Security: Max file size 500MB
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024
 
 UPLOAD_FOLDER = 'uploads'
 PROCESSED_FOLDER = 'processed'
@@ -14,9 +17,6 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['PROCESSED_FOLDER'] = PROCESSED_FOLDER
-
-# To store job statuses
-jobs = {}
 
 @app.route('/')
 def index():
@@ -29,13 +29,6 @@ def privacy():
 @app.route('/terms')
 def terms():
     return render_template('terms.html')
-
-def process_video_job(job_id, input_path, output_path):
-    try:
-        remove_noise(input_path, output_path)
-        jobs[job_id] = {'status': 'completed', 'output_file': os.path.basename(output_path)}
-    except Exception as e:
-        jobs[job_id] = {'status': 'error', 'error': str(e)}
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -60,20 +53,26 @@ def upload_file():
         output_filename = f"{base}_denoised.mp4"
         output_path = os.path.join(app.config['PROCESSED_FOLDER'], output_filename)
         
-        jobs[job_id] = {'status': 'processing'}
+        # Send job to Celery background queue
+        task = process_video_task.delay(input_path, output_path)
         
-        # Run background thread
-        thread = threading.Thread(target=process_video_job, args=(job_id, input_path, output_path))
-        thread.start()
-        
-        return jsonify({'job_id': job_id, 'message': 'Upload successful, processing started.'})
+        return jsonify({'job_id': task.id, 'message': 'Upload successful, processing queued via Celery.'})
 
 @app.route('/status/<job_id>')
 def get_status(job_id):
-    job = jobs.get(job_id)
-    if not job:
-        return jsonify({'error': 'Job not found'}), 404
-    return jsonify(job)
+    # Retrieve task from Celery
+    task = process_video_task.AsyncResult(job_id)
+    
+    response = {
+        'status': task.state, # PENDING, STARTED, SUCCESS, FAILURE, PROCESSING
+    }
+    
+    if task.state == 'SUCCESS':
+        response['output_file'] = task.info.get('output_file')
+    elif task.state == 'FAILURE':
+        response['error'] = str(task.info)
+    
+    return jsonify(response)
 
 @app.route('/download/<filename>')
 def download_file(filename):
@@ -83,4 +82,4 @@ def download_file(filename):
     return jsonify({'error': 'File not found'}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5000)

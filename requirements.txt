@@ -1,0 +1,11 @@
+Flask==3.0.0
+Werkzeug==3.0.0
+scipy
+noisereduce
+imageio-ffmpeg
+torch
+torchaudio
+demucs
+waitress
+celery
+redis
