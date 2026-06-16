@@ -1,3 +1,11 @@
+---
+title: Voice Cleaner
+emoji: 🎥
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
 # Bharti Voice Cleaner
 
 A premium, modern web application that automatically isolates human speech and removes all background noise from videos using state-of-the-art AI, while **preserving 100% of the original video quality and size**.
