@@ -49,8 +49,8 @@ def separate_vocals_demucs(audio_path, output_vocals_path):
     from demucs.pretrained import get_model
     from demucs.apply import apply_model
     
-    print("Loading Demucs AI model (htdemucs)...")
-    model = get_model('htdemucs')
+    print("Loading Demucs AI model (mdx_extra_q)...")
+    model = get_model('mdx_extra_q')
     model.eval()
     
     print("Loading audio file...")
