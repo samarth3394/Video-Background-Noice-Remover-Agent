@@ -5,7 +5,7 @@ import uuid
 from flask import Flask, request, jsonify, render_template, send_file
 from tasks import process_video_task
 from models import db, VideoJob
-from limits.util import get_remote_address
+from flask_limiter.util import get_remote_address
 from flask_limiter import Limiter
 
 app = Flask(__name__)
