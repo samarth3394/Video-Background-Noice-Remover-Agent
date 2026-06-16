@@ -9,3 +9,5 @@ demucs
 waitress
 celery
 redis
+Flask-SQLAlchemy
+Flask-Limiter

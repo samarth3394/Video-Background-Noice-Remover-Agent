@@ -71,15 +71,17 @@ def separate_vocals_demucs(audio_path, output_vocals_path):
     wav = wav.unsqueeze(0)
     
     print("Separating vocals from background using AI...")
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Using device: {device}")
     with torch.no_grad():
-        sources = apply_model(model, wav, shifts=0, split=True, overlap=0.1, device='cpu', progress=True)
+        sources = apply_model(model, wav, shifts=0, split=True, overlap=0.1, device=device, progress=True)
     
     # Demucs htdemucs outputs: drums, bass, other, vocals
     # We want the vocals (index 3)
     vocals = sources[0, 3]  # Shape: [channels, samples]
     
     # Demucs already provides clean vocals, skip redundant and slow noisereduce
-    vocals_np = vocals.numpy()
+    vocals_np = vocals.cpu().numpy()
     
     # Normalize volume to make voice louder and clearer
     vocals_np = normalize_audio(vocals_np)

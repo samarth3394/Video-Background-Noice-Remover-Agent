@@ -1,11 +1,28 @@
 import os
 import traceback
 from celery import Celery
+from celery.schedules import crontab
 from remove_bg_noise import remove_noise
+from cleanup import cleanup_old_files
 
 # Configure Celery with Redis as broker and backend
 redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 celery_app = Celery('video_tasks', broker=redis_url, backend=redis_url)
+
+celery_app.conf.beat_schedule = {
+    'cleanup-every-hour': {
+        'task': 'tasks.run_cleanup_task',
+        'schedule': crontab(minute=0, hour='*'),
+    },
+}
+celery_app.conf.timezone = 'UTC'
+
+@celery_app.task(name='tasks.run_cleanup_task')
+def run_cleanup_task():
+    print("[CELERY BEAT] Running scheduled cleanup task...")
+    cleanup_old_files('uploads', hours=2)
+    cleanup_old_files('processed', hours=2)
+    return "Cleanup finished"
 
 @celery_app.task(bind=True, name='tasks.process_video_task')
 def process_video_task(self, input_path, output_path):
